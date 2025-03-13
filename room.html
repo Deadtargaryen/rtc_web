@@ -68,9 +68,8 @@
                     <button id="screen-btn">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M0 1v17h24v-17h-24zm22 15h-20v-13h20v13zm-6.599 4l2.599 3h-12l2.599-3h6.802z"/></svg>
                     </button>
-                    <button id="leave-btn" style="background-color: #FF5050;">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M16 10v-5l8 7-8 7v-5h-8v-4h8zm-16-8v20h14v-2h-12v-16h12v-2h-14z"/></svg>
-                    </button>
+                    <button id="device-shuffle-btn">Device Options</button>
+                    <button id="leave-btn" style="background-color: #FF5050;">Leave</button>
                 </div>
 
                 <button id="join-btn">Join Stream</button>
@@ -87,8 +86,36 @@
             </section>
         </div>
     </main>
-    
+    <div id="device-modal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background-color:black; padding:20px; border-radius:8px; box-shadow:0 2px 10px rgba(0,0,0,0.1); min-width:300px;">
+        <h3>Device Options</h3>
+        <ul id="device-list" style="list-style:none; padding:0; margin:0;"></ul>
+        <button style="margin-top:10px; padding:5px 10px; border:none; background:#007bff; color:white; border-radius:4px;" onclick="document.getElementById('device-modal').style.display='none'">Close</button>
+    </div>
 </body>
+<script>
+    document.getElementById('device-shuffle-btn').addEventListener('click', async () => {
+        const deviceList = document.getElementById('device-list');
+        deviceList.innerHTML = '';
+    
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        devices.forEach(device => {
+            if (device.kind === 'audioinput' || device.kind === 'videoinput') {
+                const listItem = document.createElement('li');
+                listItem.textContent = `${device.label || device.kind}`;
+                listItem.style.padding = '8px';
+                listItem.style.borderBottom = '1px solid #ddd';
+                listItem.style.cursor = 'pointer';
+                listItem.addEventListener('click', () => {
+                    alert(`Selected device: ${device.label || device.kind}`);
+                    document.getElementById('device-modal').style.display = 'none';
+                });
+                deviceList.appendChild(listItem);
+            }
+        });
+    
+        document.getElementById('device-modal').style.display = 'block';
+    });
+    </script>
 <script type="text/javascript" src="js/AgoraRTC_N-4.11.0.js"></script>
 <script type="text/javascript" src="js/agora-rtm-sdk-1.4.4.js"></script>
 <script type="text/javascript" src="js/room.js"></script>
